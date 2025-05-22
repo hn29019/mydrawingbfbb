@@ -1,202 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HyperStudio Pro - Advanced Digital Art Platform</title>
-    <style>
-        /* Core Theme System */
-        :root {
-            --primary: #4caf50;
-            --primary-dark: #388e3c;
-            --primary-light: #81c784;
-            --background: #1e1e2f;
-            --toolbar-bg: #2a2a3f;
-            --canvas-bg: #ffffff;
-            --shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Drawing App</title>
+  <style>
+    /* Core Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: #1e1e2f;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+    }
 
-        body {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            background: var(--background);
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      background: #2a2a3f;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+    }
 
-        .toolbar {
-            display: flex;
-            gap: 10px;
-            padding: 10px;
-            background: var(--toolbar-bg);
-            box-shadow: var(--shadow);
-            position: fixed;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 8px;
-            z-index: 1000;
-        }
+    .toolbar button {
+      width: 50px;
+      height: 50px;
+      background: #4caf50;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-        .tool-button {
-            width: 48px;
-            height: 48px;
-            background: var(--primary-light);
-            border: none;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+    .toolbar button:hover {
+      background: #388e3c;
+    }
 
-        .tool-button:hover {
-            background: var(--primary);
-        }
+    .toolbar button.active {
+      background: #81c784;
+      box-shadow: 0 0 10px #4caf50;
+    }
 
-        .tool-button.active {
-            background: var(--primary-dark);
-            box-shadow: 0 0 10px var(--primary);
-        }
+    .canvas-container {
+      margin-top: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #fff;
+      border: 2px solid #2a2a3f;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+    }
 
-        .canvas-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: var(--canvas-bg);
-            margin-top: 80px;
-        }
+    canvas {
+      background: #ffffff;
+      cursor: crosshair;
+    }
 
-        canvas {
-            border: 2px solid var(--toolbar-bg);
-            box-shadow: var(--shadow);
-            cursor: crosshair;
-        }
+    .settings-panel {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      background: #2a2a3f;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
 
-        .settings-panel {
-            position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--toolbar-bg);
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
+    .settings-panel label {
+      font-size: 14px;
+      color: #fff;
+    }
 
-        .settings-panel label {
-            font-size: 14px;
-            color: #fff;
-        }
-
-        .settings-panel input {
-            width: 50px;
-        }
-    </style>
+    .settings-panel input {
+      width: 50px;
+      padding: 5px;
+      border: none;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
-    <!-- Toolbar -->
-    <div class="toolbar">
-        <button id="drawTool" class="tool-button active">✏️</button>
-        <button id="eraseTool" class="tool-button">🧹</button>
-        <button id="clearCanvas" class="tool-button">🗑️</button>
-        <button id="saveCanvas" class="tool-button">💾</button>
-    </div>
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <button id="drawTool" class="active">✏️</button>
+    <button id="eraseTool">🧹</button>
+    <button id="fillTool">🪣</button>
+    <button id="smoothTool">✨</button>
+    <button id="imperfectionTool">⚡</button>
+    <button id="clearTool">🗑️</button>
+    <button id="saveTool">💾</button>
+  </div>
 
-    <!-- Canvas Container -->
-    <div class="canvas-container">
-        <canvas id="mainCanvas" width="800" height="600"></canvas>
-    </div>
+  <!-- Canvas Container -->
+  <div class="canvas-container">
+    <canvas id="drawingCanvas" width="1000" height="600"></canvas>
+  </div>
 
-    <!-- Settings Panel -->
-    <div class="settings-panel">
-        <label for="brushSize">Brush Size:</label>
-        <input type="number" id="brushSize" value="5" min="1" max="50">
-        <label for="brushOpacity">Opacity:</label>
-        <input type="number" id="brushOpacity" value="1" step="0.1" min="0.1" max="1">
-    </div>
+  <!-- Settings Panel -->
+  <div class="settings-panel">
+    <label for="brushSize">Brush Size:</label>
+    <input type="number" id="brushSize" value="5" min="1" max="50">
+    <label for="brushOpacity">Opacity:</label>
+    <input type="number" id="brushOpacity" value="1" step="0.1" min="0.1" max="1">
+  </div>
 
-    <script>
-        // Canvas Setup
-        const canvas = document.getElementById('mainCanvas');
-        const ctx = canvas.getContext('2d');
+  <script>
+    // Canvas Setup
+    const canvas = document.getElementById('drawingCanvas');
+    const ctx = canvas.getContext('2d');
 
-        // Tools and Settings
-        const drawTool = document.getElementById('drawTool');
-        const eraseTool = document.getElementById('eraseTool');
-        const clearCanvas = document.getElementById('clearCanvas');
-        const saveCanvas = document.getElementById('saveCanvas');
-        const brushSizeInput = document.getElementById('brushSize');
-        const brushOpacityInput = document.getElementById('brushOpacity');
+    // Toolbar Buttons
+    const drawTool = document.getElementById('drawTool');
+    const eraseTool = document.getElementById('eraseTool');
+    const fillTool = document.getElementById('fillTool');
+    const smoothTool = document.getElementById('smoothTool');
+    const imperfectionTool = document.getElementById('imperfectionTool');
+    const clearTool = document.getElementById('clearTool');
+    const saveTool = document.getElementById('saveTool');
 
-        let isDrawing = false;
-        let currentTool = 'draw';
-        let brushSize = parseInt(brushSizeInput.value, 10);
-        let brushOpacity = parseFloat(brushOpacityInput.value);
+    // Settings Inputs
+    const brushSizeInput = document.getElementById('brushSize');
+    const brushOpacityInput = document.getElementById('brushOpacity');
 
-        // Update Brush Settings
-        brushSizeInput.addEventListener('input', () => {
-            brushSize = parseInt(brushSizeInput.value, 10);
-        });
+    // State Variables
+    let isDrawing = false;
+    let currentTool = 'draw';
+    let brushSize = parseInt(brushSizeInput.value, 10);
+    let brushOpacity = parseFloat(brushOpacityInput.value);
+    let drawingData = [];
 
-        brushOpacityInput.addEventListener('input', () => {
-            brushOpacity = parseFloat(brushOpacityInput.value);
-        });
+    // Update Brush Settings
+    brushSizeInput.addEventListener('input', () => {
+      brushSize = parseInt(brushSizeInput.value, 10);
+    });
 
-        // Tool Selection
-        drawTool.addEventListener('click', () => activateTool('draw'));
-        eraseTool.addEventListener('click', () => activateTool('erase'));
+    brushOpacityInput.addEventListener('input', () => {
+      brushOpacity = parseFloat(brushOpacityInput.value);
+    });
 
-        function activateTool(tool) {
-            currentTool = tool;
-            drawTool.classList.toggle('active', tool === 'draw');
-            eraseTool.classList.toggle('active', tool === 'erase');
-        }
+    // Tool Activation
+    function activateTool(tool) {
+      currentTool = tool;
+      [drawTool, eraseTool, fillTool, smoothTool, imperfectionTool].forEach(button => {
+        button.classList.toggle('active', button.id === `${tool}Tool`);
+      });
+    }
 
-        // Clear Canvas
-        clearCanvas.addEventListener('click', () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        });
+    drawTool.addEventListener('click', () => activateTool('draw'));
+    eraseTool.addEventListener('click', () => activateTool('erase'));
+    fillTool.addEventListener('click', () => activateTool('fill'));
+    smoothTool.addEventListener('click', () => activateTool('smooth'));
+    imperfectionTool.addEventListener('click', () => activateTool('imperfection'));
 
-        // Save Canvas
-        saveCanvas.addEventListener('click', () => {
-            const link = document.createElement('a');
-            link.download = 'drawing.png';
-            link.href = canvas.toDataURL();
-            link.click();
-        });
+    // Clear Canvas
+    clearTool.addEventListener('click', () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawingData = [];
+    });
 
-        // Drawing Logic
-        canvas.addEventListener('mousedown', (e) => {
-            isDrawing = true;
-            ctx.beginPath();
-            ctx.moveTo(e.offsetX, e.offsetY);
-        });
+    // Save Canvas
+    saveTool.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = 'drawing.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
 
-        canvas.addEventListener('mousemove', (e) => {
-            if (!isDrawing) return;
-            ctx.lineWidth = brushSize;
-            ctx.globalAlpha = brushOpacity;
-            ctx.strokeStyle = currentTool === 'draw' ? 'black' : 'white';
-            ctx.lineTo(e.offsetX, e.offsetY);
-            ctx.stroke();
-        });
+    // Drawing Logic
+    canvas.addEventListener('mousedown', (e) => {
+      isDrawing = true;
+      ctx.beginPath();
+      ctx.moveTo(e.offsetX, e.offsetY);
+    });
 
-        canvas.addEventListener('mouseup', () => {
-            isDrawing = false;
-        });
+    canvas.addEventListener('mousemove', (e) => {
+      if (!isDrawing) return;
+      ctx.lineWidth = brushSize;
+      ctx.globalAlpha = brushOpacity;
+      ctx.strokeStyle = currentTool === 'draw' ? 'black' : 'white';
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+    });
 
-        canvas.addEventListener('mouseleave', () => {
-            isDrawing = false;
-        });
-    </script>
+    canvas.addEventListener('mouseup', () => {
+      isDrawing = false;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      isDrawing = false;
+    });
+  </script>
 </body>
 </html>
