@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HyperStudio Pro - Advanced Digital Art Platform</title>
+    <style>
+        /* Core Theme System */
+        :root {
+            --primary: #4caf50;
+            --primary-dark: #388e3c;
+            --primary-light: #81c784;
+            --background: #1e1e2f;
+            --toolbar-bg: #2a2a3f;
+            --canvas-bg: #ffffff;
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            background: var(--toolbar-bg);
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 8px;
+            z-index: 1000;
+        }
+
+        .tool-button {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-light);
+            border: none;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .tool-button:hover {
+            background: var(--primary);
+        }
+
+        .tool-button.active {
+            background: var(--primary-dark);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .canvas-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--canvas-bg);
+            margin-top: 80px;
+        }
+
+        canvas {
+            border: 2px solid var(--toolbar-bg);
+            box-shadow: var(--shadow);
+            cursor: crosshair;
+        }
+
+        .settings-panel {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--toolbar-bg);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .settings-panel label {
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .settings-panel input {
+            width: 50px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <button id="drawTool" class="tool-button active">✏️</button>
+        <button id="eraseTool" class="tool-button">🧹</button>
+        <button id="clearCanvas" class="tool-button">🗑️</button>
+        <button id="saveCanvas" class="tool-button">💾</button>
+    </div>
+
+    <!-- Canvas Container -->
+    <div class="canvas-container">
+        <canvas id="mainCanvas" width="800" height="600"></canvas>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel">
+        <label for="brushSize">Brush Size:</label>
+        <input type="number" id="brushSize" value="5" min="1" max="50">
+        <label for="brushOpacity">Opacity:</label>
+        <input type="number" id="brushOpacity" value="1" step="0.1" min="0.1" max="1">
+    </div>
+
+    <script>
+        // Canvas Setup
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Tools and Settings
+        const drawTool = document.getElementById('drawTool');
+        const eraseTool = document.getElementById('eraseTool');
+        const clearCanvas = document.getElementById('clearCanvas');
+        const saveCanvas = document.getElementById('saveCanvas');
+        const brushSizeInput = document.getElementById('brushSize');
+        const brushOpacityInput = document.getElementById('brushOpacity');
+
+        let isDrawing = false;
+        let currentTool = 'draw';
+        let brushSize = parseInt(brushSizeInput.value, 10);
+        let brushOpacity = parseFloat(brushOpacityInput.value);
+
+        // Update Brush Settings
+        brushSizeInput.addEventListener('input', () => {
+            brushSize = parseInt(brushSizeInput.value, 10);
+        });
+
+        brushOpacityInput.addEventListener('input', () => {
+            brushOpacity = parseFloat(brushOpacityInput.value);
+        });
+
+        // Tool Selection
+        drawTool.addEventListener('click', () => activateTool('draw'));
+        eraseTool.addEventListener('click', () => activateTool('erase'));
+
+        function activateTool(tool) {
+            currentTool = tool;
+            drawTool.classList.toggle('active', tool === 'draw');
+            eraseTool.classList.toggle('active', tool === 'erase');
+        }
+
+        // Clear Canvas
+        clearCanvas.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        // Save Canvas
+        saveCanvas.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'drawing.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+
+        // Drawing Logic
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+            ctx.lineWidth = brushSize;
+            ctx.globalAlpha = brushOpacity;
+            ctx.strokeStyle = currentTool === 'draw' ? 'black' : 'white';
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDrawing = false;
+        });
+    </script>
+</body>
+</html>
